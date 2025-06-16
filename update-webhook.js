@@ -11,7 +11,7 @@ async function updateWebhook() {
       },
       body: JSON.stringify({
         webhook_id: process.env.WEBHOOK_ID,
-        is_active: true, // Set to false to disable the webhook
+        is_active: true,
       }),
     }
   );
@@ -20,4 +20,4 @@ async function updateWebhook() {
   console.log(body);
 }
 
-updateWebhook();
+module.exports = updateWebhook;

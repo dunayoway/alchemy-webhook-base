@@ -1,19 +1,19 @@
 const { ethers } = require("ethers");
 const express = require("express");
 require("dotenv").config();
+const updateWebhook = require("./update-webhook.js");
 // const ngrok = require("ngrok");
 
 const app = express();
 app.use(express.json());
 
 // Initialize provider and signer
-const provider = new ethers.JsonRpcProvider(
-  process.env.ALCHEMY_BASE_RPC_URL
-);
+const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_BASE_RPC_URL);
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 // Health check endpoint for Render
 app.get("/", (req, res) => {
+  updateWebhook();
   res.status(200).json({
     status: "active",
     monitored_address: signer.address,

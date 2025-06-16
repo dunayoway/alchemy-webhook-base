@@ -8,7 +8,7 @@ app.use(express.json());
 
 // Initialize provider and signer
 const provider = new ethers.JsonRpcProvider(
-  process.env.ALCHEMY_BASE_SEPOLIA_RPC_URL
+  process.env.ALCHEMY_BASE_RPC_URL
 );
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
@@ -30,7 +30,6 @@ app.post("/webhook/alchemy", async (req, res) => {
 
   try {
     const data = req.body.event.activity[0];
-
     if (data && data.toAddress.toLowerCase() === signer.address.toLowerCase()) {
       const balance = await provider.getBalance(signer.address);
       const feeData = await provider.getFeeData();
@@ -59,14 +58,16 @@ app.post("/webhook/alchemy", async (req, res) => {
         console.log(
           `✅ Withdrew ${ethers.formatEther(value)} ETH to ${
             process.env.VAULT_ADDRESS
-          } at https://etherscan.io/tx/${tx.hash}`
+          } at https://https://basescan.org/tx/${tx.hash}`
         );
       } else {
         console.log("⚠️ Not enough balance to cover gas.");
       }
 
       const finalBalance = await provider.getBalance(signer.address);
-      console.log(`\nPost-transfer balance: ${finalBalance} wei\n`);
+      console.log(
+        `\nPost-transfer balance: ${ethers.formatEther(finalBalance)} ETH\n`
+      );
       console.log(
         `----------------------------------------------------------------------\n`
       );

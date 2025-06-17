@@ -26,11 +26,10 @@ app.post("/webhook/alchemy", async (req, res) => {
   console.log(
     `----------------------------------------------------------------------\n`
   );
-  console.log("Received Alchemy webhook event:", req.body, "\n");
-
   try {
     const data = req.body.event.activity[0];
     if (data && data.toAddress.toLowerCase() === signer.address.toLowerCase()) {
+      console.log("New webhook event:", data, "\n");
       const balance = await provider.getBalance(signer.address);
       const feeData = await provider.getFeeData();
       const gasPrice = feeData.gasPrice;
@@ -68,14 +67,13 @@ app.post("/webhook/alchemy", async (req, res) => {
       console.log(
         `\nPost-transfer balance: ${ethers.formatEther(finalBalance)} ETH\n`
       );
+      res.status(200).send("OK");
       console.log(
         `----------------------------------------------------------------------\n`
       );
-
-      res.status(200).send("OK");
     }
   } catch (error) {
-    console.error("❌ Webhook Error:", error.message);
+    console.error(`❌ Webhook Error: ${error.message}`);
   }
 });
 

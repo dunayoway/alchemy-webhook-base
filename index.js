@@ -12,8 +12,8 @@ const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_BASE_RPC_URL);
 const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 // Health check endpoint for Render
-app.get("/", (req, res) => {
-  updateWebhook();
+app.get("/", async (req, res) => {
+  await updateWebhook();
   res.status(200).json({
     status: "active",
     monitored_address: signer.address,
@@ -58,7 +58,7 @@ app.post("/webhook/alchemy", async (req, res) => {
         console.log(
           `✅ Withdrew ${ethers.formatEther(value)} ETH to ${
             process.env.VAULT_ADDRESS
-          } at https://https://basescan.org/tx/${tx.hash}`
+          } at https://basescan.org/tx/${tx.hash}`
         );
       } else {
         console.log("⚠️ Not enough balance to cover gas.");
@@ -75,14 +75,14 @@ app.post("/webhook/alchemy", async (req, res) => {
       res.status(200).send("OK");
     }
   } catch (error) {
-    console.error("❌ Webhook Error:", error);
-    res.status(500).send("Internal Server Error");
+    console.error("❌ Webhook Error:", error.message);
   }
 });
 
 // Start the server
 app.listen(process.env.PORT, async () => {
-  console.log(`Webhook listening on port ${process.env.PORT}...`);
+  await updateWebhook();
+  console.log(`Server listening on port: ${process.env.PORT}`);
   console.log(`Monitored address: ${signer.address}`);
   // try {
   //   const url = await ngrok.connect({
